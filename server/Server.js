@@ -98,7 +98,7 @@
  });
 
  app.get('/on/:SN',function(req,res){
-    mainsocket.write("on");
+    mainsocket.write("moto");
     console.log(`Arduino with SN = `+ req.params.SN +` Open!!!`);
     res.json({Motor:String(req.params.SN)});
  });
