@@ -35,14 +35,14 @@
  var net = require('net');
 
  var sockets = [];
+ var socketdic = [];
  var mainsocket;
 
  var humidity = null;
  var soil_moisture= null;
  var temprture = null;
 
-
- function receiveData(data) {
+ function receiveData(data,socket) {
      // console.log(String.fromCharCode(data[0]));
      // console.log(data.length);
      // console.log(data);
@@ -52,6 +52,15 @@
              sens += String.fromCharCode(data[i]);
          }
          console.log(sens);
+         var jsonres = JSON.parse(sens);
+         console.log(jsonres.status);
+         if(jsonres.SN != undefined){
+            //var mysocket = sockets.find(s => socket.remotePort == socket.remotePort);
+            socketdic.push({SN:jsonres.SN,port:socket.remotePort});
+            console.log(jsonres.SN);
+            //console.log(mysocket)
+         }
+         
 		 /*
          sens = sens.split(" ");
          var stringArray = new Array();
@@ -65,7 +74,7 @@
          soil_moisture = sens[1];
          humidity = sens[2];
 		 */
-         mainsocket.write("OK");
+        socket.write("OK");
      }
      catch (ex){
          console.log(ex);
@@ -79,7 +88,9 @@
      var i = sockets.indexOf(socket);
      if (i != -1) {
          sockets.splice(i, 1);
+         socketdic.splice(i, 1);
      }
+     console.log("Arduino get OUT!!!");
  }
 //---------------------------------------------------------
  app.get('/on', function(req, res){
@@ -98,7 +109,9 @@
  });
 
  app.get('/on/:SN',function(req,res){
-    mainsocket.write("moto");
+     var socketSN = socketdic.find(s => s.SN == req.params.SN);
+    var mysocket = sockets.find(s => s.remotePort == socketSN.port);
+    mysocket.write("moto");
     console.log(`Arduino with SN = `+ req.params.SN +` Open!!!`);
     res.json({Motor:String(req.params.SN)});
  });
@@ -115,13 +128,14 @@
  //-------------------------------------------------------
 
  function newSocket(socket) {
+     //let socketNumber = sockets.length();
      mainsocket = socket;
      sockets.push(socket);
      console.log("new Arduino Connected");
      socket.write('Welcome to Telnet HRF!\n');
 	 console.log("new Arduino login");
      socket.on('data', function(data) {
-         receiveData(data);
+         receiveData(data,socket);
      })
      socket.on('end', function() {
          closeSocket(socket);
