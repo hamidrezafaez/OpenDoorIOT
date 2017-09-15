@@ -9,7 +9,8 @@
 #define connecting "AT+CWJAP="
 #define getipaddress "AT+CIFSR"
 #define senddata "AT+CIPSEND="
-#define connectserver "AT+CIPSTART=\"TCP\",\"5.160.71.117\",2000"
+//#define connectserver "AT+CIPSTART=\"TCP\",\"5.160.71.117\",2000"
+#define connectserver "AT+CIPSTART=\"TCP\",\"192.168.100.96\",2000"
 #define senddata "AT+CIPSEND="
 
 void lightControl(bool b,bool r,bool g);
@@ -123,9 +124,9 @@ void loop() {
       lightControl('g');
 
       ConnectWifi = true;
+      delay(2000);
       Serial.println(connectserver);
       digitalWrite(7,0);
-      delay(500);
     }
     else if(com.indexOf("DISC") != -1 || com.indexOf("FI DI") != -1){
       ConnectWifi = false;
@@ -141,6 +142,12 @@ void loop() {
     else if(com.indexOf("HRF") != -1 || com.indexOf("Teln") != -1 || com.indexOf("Wel") != -1){
       ConnectWifi = true;
       connectServer = true;
+      String Message = "{\"SN\":\""+SN+"\"}";
+      String lenght = senddata;
+      lenght += Message.length();
+      Serial.println(lenght);
+      delay(100);
+      Serial.println(Message);
       lightControl('g');
     }
     else if(com.indexOf("CLO") != -1||com.indexOf("OSED") != -1){
@@ -160,6 +167,7 @@ void loop() {
     }
     //digitalWrite(10,1);
 }
+
 
 void lightControl(char light){
   if(light == 'g'){
