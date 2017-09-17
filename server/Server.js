@@ -1,15 +1,15 @@
-  var express = require('express');
-    var favicon = require('serve-favicon');
-    var logger = require('morgan');
-    var methodOverride = require('method-override');
-    var session = require('express-session');
-    var bodyParser = require('body-parser');
-    var multer = require('multer');
-    var errorHandler = require('errorhandler');
- var http = require('http');
- var path = require('path');
+var express = require('express');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var methodOverride = require('method-override');
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var errorHandler = require('errorhandler');
+var http = require('http');
+var path = require('path');
 
- var app = express();
+var app = express();
 
  // all environments
    app.set('port', process.env.PORT || 3000);
@@ -115,6 +115,19 @@
     console.log(`Arduino with SN = `+ req.params.SN +` Open!!!`);
     res.json({Motor:String(req.params.SN)});
  });
+
+ app.get('/on/:SN/:num',function(req,res){
+    var socketSN = socketdic.find(s => s.SN == req.params.SN);
+   var mysocket = sockets.find(s => s.remotePort == socketSN.port);
+   if(req.params.num == 1){
+    mysocket.write("moto");
+   }
+   else if(req.params.num == 2){
+    mysocket.write("Remoted");
+   }
+   console.log(`Arduino with SN = `+ req.params.SN +` Open!!!`);
+   res.json({Motor:String(req.params.SN)});
+});
 
  app.get('/b', function(req, res){
      mainsocket.write("send to client\n");
