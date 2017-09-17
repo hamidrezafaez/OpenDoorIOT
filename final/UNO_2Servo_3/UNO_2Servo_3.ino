@@ -33,6 +33,7 @@ void setup() {
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT);
   pinMode(7,OUTPUT);
+  pinMode(10,OUTPUT);
   // put you\r setup code here, to run once:
   Serial.begin(115200);
   delay(200);
@@ -108,6 +109,10 @@ void loop() {
       Serial.println(lenght);
       delay(100);
       Serial.println(Message);
+    }else if(com.indexOf("Remo") != -1||com.indexOf("moted") != -1){
+      digitalWrite(10,1);
+      delay(200);
+      digitalWrite(10,0);
     }
     else if(com.indexOf("FAIL") != -1 || com.indexOf("+CWJAP") != -1 || com.indexOf("JAP:3") != -1){
       lightControl('r');
@@ -186,4 +191,3 @@ void lightControl(char light){
     digitalWrite(6,0);
   }
 };
-
