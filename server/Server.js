@@ -43,9 +43,7 @@ var app = express();
  var temprture = null;
 
  function receiveData(data,socket) {
-     // console.log(String.fromCharCode(data[0]));
-     // console.log(data.length);
-     // console.log(data);
+
      try {
          var sens = "";
          for (var i = 0; i < data.length; i++) {
@@ -56,24 +54,19 @@ var app = express();
          console.log(jsonres.status);
          if(jsonres.SN != undefined){
             //var mysocket = sockets.find(s => socket.remotePort == socket.remotePort);
+
+            var oldSocketSN  = socketdic.find(s => s.SN == jsonres.SN );
+            if(oldSocketSN !== undefined){
+                var oldSocket = sockets.find(s => s.remotePort == oldSocketSN.port);
+                var i = sockets.indexOf(oldSocket);
+                sockets.splice(i, 1);
+                socketdic.splice(i, 1);
+            }
             socketdic.push({SN:jsonres.SN,port:socket.remotePort});
             console.log(jsonres.SN);
             //console.log(mysocket)
          }
          
-		 /*
-         sens = sens.split(" ");
-         var stringArray = new Array();
-         for (var i = 0; i < sens.length; i++) {
-             stringArray.push(sens[i]);
-             if (i != sens.length - 1) {
-                 stringArray.push(" ");
-             }
-         }
-         temprture = sens[0];
-         soil_moisture = sens[1];
-         humidity = sens[2];
-		 */
         socket.write("OK");
      }
      catch (ex){
