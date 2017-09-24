@@ -11,6 +11,7 @@ int b = 12;
 int remote = 16;
 int serv1 = 5;
 int serv2 = 4;
+int pos = 0;
 const char* ssid     = "hrf 2";
 const char* password = "12345678";
 const char* host = "5.160.71.117";
@@ -19,6 +20,7 @@ int timer = 0;
 bool ConnectWifi = false;
 bool connectServer = false;
 String SN = "11112";
+String ServerMessage = "";
  
 void setup() {
   myservo1.attach(serv1);
@@ -30,8 +32,9 @@ void setup() {
   pinMode(remote,OUTPUT);
   Serial.begin(115200);
   Serial.setTimeout(1);
+  lightControl('r');
   WiFi.begin(ssid, password);
- 
+
   #ifdef SERIAL_LOG
   Serial.print("\nConnecting to "); Serial.println(ssid);
   #endif
@@ -46,31 +49,50 @@ void setup() {
 }
  
 void loop() {
- 
+  lightControl('g');
   if(!server.connect(host, port)){
     #ifdef SERIAL_LOG
       Serial.println("connection failed");
-      delay(500);
+      delay(5000);
     #endif
     return; 
     }
  
     #ifdef SERIAL_LOG
-    if(server.connected())
+    if(server.connected()){
         Serial.println("Server Connected");
+        String SNOfArduino = "{\"SN\":\""+SN+"\"}";
+        server.print(SNOfArduino);
+    }
     #endif  
     while(server.connected()){
  
      if (server.available()) {
-      char c = server.read();
-      Serial.print(c);    
+       ServerMessage = "";
+       while(server.available()){
+        char c = server.read();
+        ServerMessage += c;
+        Serial.print(c);  
+       }  
+       if(ServerMessage.indexOf("moto")!=-1){
+        for (pos = 0; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
+          myservo1.write(pos);              // tell servo to go to position in variable 'pos'
+          delay(15);                       // waits 15ms for the servo to reach the position
+        }
+        for (pos = 120; pos >= 0; pos -= 1) { // goes from 0 degrees to 180 degrees
+          myservo2.write(pos);              // tell servo to go to position in variable 'pos'
+          delay(15);                       // waits 15ms for the servo to reach the position
+        }
+        String OpenDoor = "{\"status\":\"OK\"}";//{"status":"OK"}
+        server.print(OpenDoor);
+       }
     }
     //Send messages to server
     //Envia as menssagens para o client
     bool message_available = (Serial.available() > 0);
-    delay(200);
     String message;
     if (message_available) {
+        delay(200);
         message = Serial.readStringUntil('\n');
         server.print(message);
     }
