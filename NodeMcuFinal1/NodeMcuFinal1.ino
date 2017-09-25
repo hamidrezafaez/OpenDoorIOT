@@ -5,12 +5,12 @@
 WiFiClient server;
 Servo myservo1;
 Servo myservo2;
-int r = 2;
-int g = 14;
-int b = 12;
-int remote = 16;
-int serv1 = 5;
-int serv2 = 4;
+int r = 2;//D4
+int g = 14;//D5
+int b = 12;//D6
+int remote = 16;//D0
+int serv1 = 5;//D1
+int serv2 = 4;//D2
 int pos = 0;
 const char* ssid     = "hrf 2";
 const char* password = "12345678";
