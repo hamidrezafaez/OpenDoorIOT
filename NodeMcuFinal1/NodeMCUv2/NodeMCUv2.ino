@@ -68,6 +68,8 @@ void handlessidpass(){
 void setup() {
   myservo1.attach(serv1);
   myservo2.attach(serv2);
+  myservo1.write(120);
+  myservo2.write(10);
   pinMode(r,OUTPUT);
   pinMode(g,OUTPUT);
   pinMode(b,OUTPUT);
@@ -121,11 +123,12 @@ void loop() {
         Serial.print(c);  
        }  
        if(ServerMessage.indexOf("moto")!=-1){
-        for (pos = 0; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
+        for (pos = 70; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
           myservo1.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
-        for (pos = 120; pos >= 10; pos -= 1) { // goes from 0 degrees to 180 degrees
+        delay(1000);
+        for (pos = 60; pos >= 10; pos -= 1) { // goes from 0 degrees to 180 degrees
           myservo2.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
@@ -172,4 +175,3 @@ void lightControl(char light){
     digitalWrite(g,0);
   }
 };
-
