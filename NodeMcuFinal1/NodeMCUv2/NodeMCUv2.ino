@@ -128,8 +128,14 @@ void loop() {
           delay(15);                       // waits 15ms for the servo to reach the position
         }
         delay(1000);
+        myservo2.write(60);
+        delay(400); 
         for (pos = 60; pos >= 10; pos -= 1) { // goes from 0 degrees to 180 degrees
           myservo2.write(pos);              // tell servo to go to position in variable 'pos'
+          delay(15);                       // waits 15ms for the servo to reach the position
+        }
+        for (pos = 70; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
+          myservo1.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
         String OpenDoor = "{\"status\":\"OK\"}";//{"status":"OK"}
@@ -137,7 +143,7 @@ void loop() {
        }
        else if(ServerMessage.indexOf("Remo") != -1||ServerMessage.indexOf("moted") != -1){
         digitalWrite(remote,1);
-        delay(200);
+        delay(500);
         digitalWrite(remote,0);
       }
     }
