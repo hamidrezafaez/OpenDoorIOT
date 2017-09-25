@@ -49,10 +49,10 @@ void setup() {
 }
  
 void loop() {
-  lightControl('g');
   if(!server.connect(host, port)){
     #ifdef SERIAL_LOG
       Serial.println("connection failed");
+      lightControl('r');
       delay(5000);
     #endif
     return; 
@@ -61,6 +61,7 @@ void loop() {
     #ifdef SERIAL_LOG
     if(server.connected()){
         Serial.println("Server Connected");
+        lightControl('g');
         String SNOfArduino = "{\"SN\":\""+SN+"\"}";
         server.print(SNOfArduino);
     }
@@ -79,13 +80,18 @@ void loop() {
           myservo1.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
-        for (pos = 120; pos >= 0; pos -= 1) { // goes from 0 degrees to 180 degrees
+        for (pos = 120; pos >= 10; pos -= 1) { // goes from 0 degrees to 180 degrees
           myservo2.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
         String OpenDoor = "{\"status\":\"OK\"}";//{"status":"OK"}
         server.print(OpenDoor);
        }
+       else if(ServerMessage.indexOf("Remo") != -1||ServerMessage.indexOf("moted") != -1){
+        digitalWrite(remote,1);
+        delay(200);
+        digitalWrite(remote,0);
+      }
     }
     //Send messages to server
     //Envia as menssagens para o client
