@@ -84,7 +84,12 @@ void setup() {
   Serial.print("Configuring access point...");
   /* You can remove the password parameter if you want the AP to be open. */
   WiFi.softAP(ssid, password);
-
+  String clientMac = "";
+  unsigned char mac[6];
+  WiFi.macAddress(mac);
+  clientMac += macToStr(mac);
+  Serial.println("Mac Address : "+clientMac);
+  //--------------------
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
@@ -114,7 +119,8 @@ void loop() {
     }
     #endif  
     while(SocketServer.connected()){
- 
+      //server.end();
+      WiFi.softAPdisconnect();
      if (SocketServer.available()) {
        ServerMessage = "";
        while(SocketServer.available()){
@@ -181,3 +187,15 @@ void lightControl(char light){
     digitalWrite(g,0);
   }
 };
+
+
+String macToStr(const uint8_t* mac)
+{
+String result;
+for (int i = 0; i < 6; ++i) {
+result += String(mac[i], 16);
+if (i < 5)
+result += ':';
+}
+return result;
+}
